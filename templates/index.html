@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>msg.dme.ninja</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      .container {
+        max-width: 1000px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Enviar mensagens para o lcd</h1>
+      <p>Estado do lcd: {{ lcd_status }}</p>
+      <form role="form" method='POST' action='/'>
+        <div class="form-group">
+          <input type="text" name="msg" class="form-control" id="url-box" placeholder="mensagem..." style="max-width: 300px;" maxlength="10" autofocus required>
+        </div>
+        <button type="submit" class="btn btn-default">Enviar</button>
+        {% if has_image %}
+            <br/>
+            <img src={{ image }} alt="lcd" width="340" height="240">
+        {% endif %}
+        <div>
+            <img id="lcdImg" src="" alt="lcd" width="340" height="240">
+        </div>
+      </form>
+      <br>
+    </div>
+    <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script>
+        const urlBase = "http://" + window.location.host;
+        const lcdImg = document.querySelector("#lcdImg");
+
+        const updateImgCallBack = (obj) => {
+            console.log('updateImgCallBack');
+            console.log(obj);
+            if ("image" in obj) {
+                let b64 = obj.image;
+                console.log("setAttribute");
+                lcdImg.setAttribute("src", "data:image/png;base64," + b64);
+            }
+        }
+
+        const updateImg = () => {
+            fetch(urlBase + "/api/getImage")
+            .then(response => response.json())
+            .then(data => updateImgCallBack(data));
+        }
+
+        setInterval(updateImg, 1000);
+    </script>
+  </body>
+</html>

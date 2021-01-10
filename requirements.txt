@@ -1,0 +1,5 @@
+flask
+Flask-API
+requests
+pyserial
+requests
